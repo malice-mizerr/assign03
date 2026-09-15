@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
 
-public class SortedArrayList<E  extends Comparable<? super E>> implements  SortedList<E> {
+public class SortedArrayList<E extends Comparable<? super E>> implements SortedList<E> {
 
 	private E[] data;
 
@@ -13,16 +13,12 @@ public class SortedArrayList<E  extends Comparable<? super E>> implements  Sorte
 	@SuppressWarnings("unchecked")
 	public SortedArrayList() {
 		this.data = (E[]) new Object[10]; // Make a new array with 10 spaces
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
 	public SortedArrayList(Comparator<? super E> cmp) {
 		this.data = (E[]) new Object[10];
-//		for(int i = 0; i < this.data.length - 1; i++) {
-//			if(this.data[i].compareTo(this.data[i+1] ))
-//		}
-		
 	}
 
 	@Override
@@ -61,22 +57,44 @@ public class SortedArrayList<E  extends Comparable<? super E>> implements  Sorte
 	public void insert(E element) {
 		// TODO Auto-generated method stub
 		int originalIdx = this.data.length;
-		if(this.data[this.data.length-1].equals(null)) { //If the last element in this arr is empty, put the new item there
-			this.data[this.data.length-1] = element;
-		}
-		else { //If it was already occupied, increase this arr size and put the new element at the end
+		if (this.data[this.data.length - 1].equals(null)) { // If the last element in this arr is empty, put the new
+															// item there
+			this.data[this.data.length - 1] = element;
+		} else { // If it was already occupied, increase this arr size and put the new element at
+					// the end
 			resizeArr();
 			this.data[originalIdx] = element;
 		}
-		
+
 	}
 
+	/**
+	 * Inserts the specified elements into this sorted list.
+	 * 
+	 * @param coll - the collection of elements to insert
+	 */
 	@Override
 	public void insertAll(Collection<? extends E> coll) {
-		// TODO Auto-generated method stub
+		while (coll.size() > this.data.length) { // While there are too many elements to fit into this arr, increase the// size
+			resizeArr();
+		}
+
+		/*
+		 * We need to sort the objects before inserting them
+		 */
+		E[] collArray = (E[]) coll.toArray();
+
+		for (int i = 0; i < this.data.length; i++) {
+			this.data[i] = collArray[i];
+		}
 
 	}
 
+	/**
+	 * Determines whether this sorted list contains any elements.
+	 * 
+	 * @return true if this sorted list contains no elements, false otherwise
+	 */
 	@Override
 	public boolean isEmpty() {
 
@@ -104,6 +122,11 @@ public class SortedArrayList<E  extends Comparable<? super E>> implements  Sorte
 		return null;
 	}
 
+	/**
+	 * Gets the number of elements in this sorted list.
+	 * 
+	 * @return the number of elements in this sorted list
+	 */
 	@Override
 	public int size() {
 		return this.data.length;
@@ -130,16 +153,14 @@ public class SortedArrayList<E  extends Comparable<? super E>> implements  Sorte
 			int mid = left + (right - left) / 2;
 
 			int comparison = data[mid].compareTo(target);
-			
-			if (comparison == 0) { //The target was found
+
+			if (comparison == 0) { // The target was found
 				return true;
 				// for countEntries, amount++;
 				// for contains, return true;
-			}
-			else if (comparison < 0) { //The mid is lesser than target, look at the right half
+			} else if (comparison < 0) { // The mid is lesser than target, look at the right half
 				left = mid + 1;
-			} 
-			else { //The mid is greater than target, look at the left half
+			} else { // The mid is greater than target, look at the left half
 				right = mid - 1;
 			}
 		}
