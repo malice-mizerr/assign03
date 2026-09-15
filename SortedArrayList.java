@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
 
-public class SortedArrayList<E> implements SortedList<E> {
+public class SortedArrayList<E  extends Comparable<? super E>> implements  SortedList<E> {
 
 	private E[] data;
 
@@ -13,22 +13,31 @@ public class SortedArrayList<E> implements SortedList<E> {
 	@SuppressWarnings("unchecked")
 	public SortedArrayList() {
 		this.data = (E[]) new Object[10]; // Make a new array with 10 spaces
+		
 	}
 
+	@SuppressWarnings("unchecked")
 	public SortedArrayList(Comparator<? super E> cmp) {
-
+		this.data = (E[]) new Object[10];
+//		for(int i = 0; i < this.data.length - 1; i++) {
+//			if(this.data[i].compareTo(this.data[i+1] ))
+//		}
+		
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void clear() {
-		E[] emptyArr = new E[this.data.length];
+		E[] emptyArr = (E[]) new Object[this.data.length];
 		this.data = emptyArr;
 	}
 
 	@Override
 	public boolean contains(E element) {
 		// TODO Auto-generated method stub
-
+		if (binarySearch(element)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -42,11 +51,8 @@ public class SortedArrayList<E> implements SortedList<E> {
 	public int countEntries(E target) {
 		// TODO Auto-generated method stub
 		int amount = 0;
-		for (int i = 0; i < data.length; i++) {
-			E currentElement = data[i];
-			if (currentElement.equals(target)) {
-				amount++;
-			}
+		if (binarySearch(target)) {
+			amount++;
 		}
 		return amount;
 	}
@@ -54,7 +60,15 @@ public class SortedArrayList<E> implements SortedList<E> {
 	@Override
 	public void insert(E element) {
 		// TODO Auto-generated method stub
-
+		int originalIdx = this.data.length;
+		if(this.data[this.data.length-1].equals(null)) { //If the last element in this arr is empty, put the new item there
+			this.data[this.data.length-1] = element;
+		}
+		else { //If it was already occupied, increase this arr size and put the new element at the end
+			resizeArr();
+			this.data[originalIdx] = element;
+		}
+		
 	}
 
 	@Override
@@ -65,8 +79,8 @@ public class SortedArrayList<E> implements SortedList<E> {
 
 	@Override
 	public boolean isEmpty() {
-		
-		if(this.data.length == 0) {
+
+		if (this.data.length == 0) {
 			return true;
 		}
 		return false;
@@ -92,8 +106,7 @@ public class SortedArrayList<E> implements SortedList<E> {
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.data.length;
 	}
 
 	@Override
@@ -109,43 +122,49 @@ public class SortedArrayList<E> implements SortedList<E> {
 	 * 
 	 * @return
 	 */
-	private int binarySearch(E target) {
+	private boolean binarySearch(E target) {
 		int left = 0;
 		int right = data.length - 1;
 
 		while (left <= right) {
 			int mid = left + (right - left) / 2;
 
-			if (data[mid].equals(target)) {
+			int comparison = data[mid].compareTo(target);
+			
+			if (comparison == 0) { //The target was found
+				return true;
 				// for countEntries, amount++;
 				// for contains, return true;
 			}
-
-			if (data[mid] < target) {
+			else if (comparison < 0) { //The mid is lesser than target, look at the right half
 				left = mid + 1;
-			} else {
+			} 
+			else { //The mid is greater than target, look at the left half
 				right = mid - 1;
 			}
 		}
 
+		return false;
 		// return false or -1;
 
 	}
 
 	/**
-	 * It is not acceptable for the array to run out of space for new
-	 * elements, nor is it acceptable to create a gigantic array. Start with a
-	 * modestly-size array and double the capacity as needed.
+	 * It is not acceptable for the array to run out of space for new elements, nor
+	 * is it acceptable to create a gigantic array. Start with a modestly-size array
+	 * and double the capacity as needed.
 	 * 
 	 * @return
 	 */
-	private E[] resizeArr() {
-		E[] newData = new E[data.length * 2]; //Make a new array that is double the size of the current one
-		
-		for(int i = 0; i < newData.length; i++){ //Put back in the original data
-			newData[i] = this.data[i]; 
+	@SuppressWarnings("unchecked")
+	private void resizeArr() {
+		E[] newData = (E[]) new Object[this.data.length * 2]; // Make a new array that is double the size of the current
+																// one
+
+		for (int i = 0; i < newData.length; i++) { // Put back in the original data
+			newData[i] = this.data[i];
 		}
-		
+
 		this.data = newData;
 	}
 
