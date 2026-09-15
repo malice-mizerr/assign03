@@ -10,8 +10,9 @@ public class SortedArrayList<E> implements SortedList<E> {
 	private E[] data;
 
 	// Constructors
+	@SuppressWarnings("unchecked")
 	public SortedArrayList() {
-		this.data = new E[10]; // Make a new array with 10 spaces
+		this.data = (E[]) new Object[10]; // Make a new array with 10 spaces
 	}
 
 	public SortedArrayList(Comparator<? super E> cmp) {
