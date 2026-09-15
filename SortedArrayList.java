@@ -39,8 +39,11 @@ public class SortedArrayList<E extends Comparable<? super E>> implements SortedL
 
 	@Override
 	public boolean containsAll(Collection<? extends E> items) {
+		for(int i = 0; i < this.data.length; i ++) {
+			
+		}
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -78,16 +81,24 @@ public class SortedArrayList<E extends Comparable<? super E>> implements SortedL
 		while (coll.size() > this.data.length) { // While there are too many elements to fit into this arr, increase the// size
 			resizeArr();
 		}
-
-		/*
-		 * We need to sort the objects before inserting them
-		 */
+		
 		E[] collArray = (E[]) coll.toArray();
 
 		for (int i = 0; i < this.data.length; i++) {
 			this.data[i] = collArray[i];
 		}
 
+		/*
+		 * We need to sort the objects after inserting them
+		 */
+		
+//		(this.data[i], this.data[i+1]) -> 
+//		{ if( this.data[i].compareTo(this.data[i+1]) ) {
+//			return -1; }
+//		if(a.getMass() > b.getMass()) {
+//			return 1;
+//		}
+//		return 0; }
 	}
 
 	/**
@@ -134,8 +145,17 @@ public class SortedArrayList<E extends Comparable<? super E>> implements SortedL
 
 	@Override
 	public Object[] toArray() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO Auto-generated method 
+		E[] newArr = (E[]) new Object[this.data.length];
+		
+		for(int i = 0; i < this.data.length; i++) {
+			newArr[i] = this.data[i];
+		}
+		
+		/*
+		 * Sort newArr
+		 */
+		return newArr;
 	}
 
 	/**
@@ -187,6 +207,10 @@ public class SortedArrayList<E extends Comparable<? super E>> implements SortedL
 		}
 
 		this.data = newData;
+	}
+
+	private void sortElements() {
+
 	}
 
 	/*
