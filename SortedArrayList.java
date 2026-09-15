@@ -1,8 +1,6 @@
 package assign03;
 
 import java.util.Comparator;
-import java.util.Collection;
-import java.util.NoSuchElementException;
 
 /**
  * 
@@ -12,6 +10,9 @@ import java.util.NoSuchElementException;
 
 public class SortedArrayList<E> implements SortedList<E> {
 	private E[] array;
-	private int size;
+
+	private int size();
+
 	private Comparator<? super E> comparator;
+
 }
