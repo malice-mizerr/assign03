@@ -101,4 +101,35 @@ public class SortedArrayListTest {
 		assertEquals(2, list.size());
 	}
 
+	@Test
+	public void containsFindsExistingElement() {
+		list.insert(10);
+		list.insert(40);
+		assertTrue(list.contains(10));
+	}
+
+	@Test
+	public void containsReturnFalseForNonExistingElement() {
+		list.insert(7);
+		assertFalse(list.contains(32));
+	}
+
+	@Test
+	public void containsReturnFalseForEmptyList() {
+		assertFalse(list.contains(30));
+	}
+
+	@Test
+	public void containsReturnFalseForNull() {
+		list.insert(5);
+		assertFalse(list.contains(null));
+	}
+
+	@Test
+	public void countEntriesCountsDuplicates() {
+		list.insert(7);
+		list.insert(7);
+		list.insert(2);
+		assertEquals(2, list.countEntries(7));
+	}
 }
