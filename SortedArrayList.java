@@ -8,97 +8,112 @@ import java.util.NoSuchElementException;
 public class SortedArrayList<E extends Comparable<? super E>> implements SortedList<E> {
 
 	private E[] data;
+	private int size;
 
 	// Constructors
 	@SuppressWarnings("unchecked")
 	public SortedArrayList() {
-		this.data = (E[]) new Object[10]; // Make a new array with 10 spaces
+		this.data = (E[]) new Object[50]; // Make a new array with 50 spaces
+		this.size = 0;
 
 	}
 
 	@SuppressWarnings("unchecked")
 	public SortedArrayList(Comparator<? super E> cmp) {
-		this.data = (E[]) new Object[10];
+		this.data = (E[]) new Object[50]; // Check
+		this.size = 0;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public void clear() {
-		E[] emptyArr = (E[]) new Object[this.data.length];
+		E[] emptyArr = (E[]) new Object[50]; // Check should it be a default val or this.data.length?
 		this.data = emptyArr;
 	}
 
 	@Override
 	public boolean contains(E element) {
-		// TODO Auto-generated method stub
-		if (binarySearch(element)) {
+		// treat contains as insert at first; check the index that binary search
+		// produces of where the object should be inserted
+		int objIdx = binarySearch(element);
+
+		// if idx obj equals element, return true
+		if (this.data[objIdx].equals(element)) { // CHECK if .equals is valid
 			return true;
 		}
+
+		// since idx obj =/= element, return false
 		return false;
 	}
 
 	@Override
-	public boolean containsAll(Collection<? extends E> items) {
-		for(int i = 0; i < this.data.length; i ++) {
-			
+	public boolean containsAll(Collection<? extends E> items) { // Check
+
+		for (int i = 0; i < this.data.length; i++) {
+			boolean currentElementVal = contains(this.data[i]); // lllCheck if this arr contains the element
+			if (!currentElementVal) {
+				return false;
+			}
 		}
-		// TODO Auto-generated method stub
+
 		return true;
 	}
 
 	@Override
 	public int countEntries(E target) {
-		// TODO Auto-generated method stub
 		int amount = 0;
-		if (binarySearch(target)) {
-			amount++;
+
+		for (int i = 0; i < this.data.length; i++) {
+			int idx = binarySearch(target); // Find index where of the target is
+			if (this.data[i].equals(this.data[idx])) { // CHECK equals
+				amount += 1;
+			}
 		}
 		return amount;
 	}
 
 	@Override
-	public void insert(E element) {
-		// TODO Auto-generated method stub
-		int originalIdx = this.data.length;
-		if (this.data[this.data.length - 1].equals(null)) { // If the last element in this arr is empty, put the new
-															// item there
-			this.data[this.data.length - 1] = element;
-		} else { // If it was already occupied, increase this arr size and put the new element at
-					// the end
+	public void insert(E element) { // Check
+		// First, check if there is enough room to add in the arr (if size == length,
+		// double the arr)
+		if (this.size == this.data.length) {
 			resizeArr();
-			this.data[originalIdx] = element;
 		}
+
+		// Get the index of where the object should go in the arr using binarysearch
+		int idx = binarySearch(element);
+
+		// if the sorted idx is at the beginning or middle, shift every object after idx
+		// + 1
+		// if(idx != size+1)
+		// for each :
+
+		// set the index to the element object
+		this.data[idx] = element;
+
+		this.size += 1; // increase size of this list (NOT the backing array)
 
 	}
 
 	/**
-	 * Inserts the specified elements into this sorted list.
+	 * 
+	 * Inserts the specifieieied elements into this sorted list.
 	 * 
 	 * @param coll - the collection of elements to insert
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public void insertAll(Collection<? extends E> coll) {
-		while (coll.size() > this.data.length) { // While there are too many elements to fit into this arr, increase the// size
+		while (coll.size() > this.data.length) { // While there are too many elements to fit into this arr, increase
+													// the size
 			resizeArr();
 		}
-		
+
 		E[] collArray = (E[]) coll.toArray();
 
-		for (int i = 0; i < this.data.length; i++) {
-			this.data[i] = collArray[i];
+		for (int i = 0; i < this.data.length; i++) { // Check change to a foreach or is this fine?
+			insert(collArray[i]); // insert the item at this idx
 		}
-
-		/*
-		 * We need to sort the objects after inserting them
-		 */
-		
-//		(this.data[i], this.data[i+1]) -> 
-//		{ if( this.data[i].compareTo(this.data[i+1]) ) {
-//			return -1; }
-//		if(a.getMass() > b.getMass()) {
-//			return 1;
-//		}
-//		return 0; }
 	}
 
 	/**
@@ -108,8 +123,7 @@ public class SortedArrayList<E extends Comparable<? super E>> implements SortedL
 	 */
 	@Override
 	public boolean isEmpty() {
-
-		if (this.data.length == 0) {
+		if (this.size == 0) {
 			return true;
 		}
 		return false;
@@ -117,20 +131,38 @@ public class SortedArrayList<E extends Comparable<? super E>> implements SortedL
 
 	@Override
 	public E max() throws NoSuchElementException {
-		// TODO Auto-generated method stub
-		return null;
+		// check if arr is empty
+		if (this.size == 0) {
+			throw new NoSuchElementException("This SortedArrayList is empty, so there can be no maximum value");
+		}
+		// get the last element in the list (NOT the backing arr) (Check)
+		return this.data[size - 1]; // check if idx is right
 	}
 
 	@Override
 	public E median() throws NoSuchElementException {
-		// TODO Auto-generated method stub
-		return null;
+		// check if arr is empty
+		if (this.size == 0) {
+			throw new NoSuchElementException("This SortedArrayList is empty, so there can be no median value");
+		}
+
+		// Get the middle object of the list
+		int left = 0;
+		int right = data.length - 1; // Check should I be calculating the median using the list or the backing arr?
+
+		int mid = left + (right - left) / 2;
+
+		return this.data[mid];
 	}
 
 	@Override
 	public E min() throws NoSuchElementException {
-		// TODO Auto-generated method stub
-		return null;
+		// check if arr is empty
+		if (this.size == 0) {
+			throw new NoSuchElementException("This SortedArrayList is empty, so there can be no minimum value");
+		}
+		// throw excp
+		return this.data[0];
 	}
 
 	/**
@@ -140,21 +172,20 @@ public class SortedArrayList<E extends Comparable<? super E>> implements SortedL
 	 */
 	@Override
 	public int size() {
-		return this.data.length;
+		return this.size; // Check
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Object[] toArray() {
-		// TODO Auto-generated method 
 		E[] newArr = (E[]) new Object[this.data.length];
-		
-		for(int i = 0; i < this.data.length; i++) {
+
+		for (int i = 0; i < this.data.length; i++) {
 			newArr[i] = this.data[i];
 		}
-		
-		/*
-		 * Sort newArr
-		 */
+
+		// The data of this arr is already sorted so we can just insert everything into
+		// the new array and return it (Check)
 		return newArr;
 	}
 
@@ -165,19 +196,20 @@ public class SortedArrayList<E extends Comparable<? super E>> implements SortedL
 	 * 
 	 * @return
 	 */
-	private boolean binarySearch(E target) {
+	private int binarySearch(E target) { // should tell you where to insert the object
 		int left = 0;
 		int right = data.length - 1;
 
+		// ((Comparable<? super E>)o1).compareTo(o2);
 		while (left <= right) {
 			int mid = left + (right - left) / 2;
 
-			int comparison = data[mid].compareTo(target);
+			int comparison = data[mid].compareTo(target); // Check
+			//If the class was passed in with a comparator, determine which kind of comparison we would make
 
 			if (comparison == 0) { // The target was found
-				return true;
-				// for countEntries, amount++;
-				// for contains, return true;
+				return mid; // index of where the item can be found
+
 			} else if (comparison < 0) { // The mid is lesser than target, look at the right half
 				left = mid + 1;
 			} else { // The mid is greater than target, look at the left half
@@ -185,9 +217,9 @@ public class SortedArrayList<E extends Comparable<? super E>> implements SortedL
 			}
 		}
 
-		return false;
-		// return false or -1;
-
+		// if target is already in the array, return idx it's found at
+		// if it's not in there, return index where we should insert it
+		return idx; // index where it can be inserted
 	}
 
 	/**
@@ -209,24 +241,9 @@ public class SortedArrayList<E extends Comparable<? super E>> implements SortedL
 		this.data = newData;
 	}
 
-	private void sortElements() {
+	// for insert if the sorted idx is at the beginning or middle, shift every
+	// object after idx + 1
+	private void shiftElements() {
 
 	}
-
-	/*
-	 * private void loopFramework(){
-	 * 
-	 * for(int i = 0; i < array.length; i++){ // }
-	 */
-
-	/*
-	 * if (cmp != null){ use comparator} else { treat as comparable do this in a
-	 * helper
-	 * 
-	 * 
-	 * Lambda Expression (a, b) -> { if( a.getMass() < b.getMass()) return -1; if(
-	 * a.getMass() > b.getMass()) return 1; return 0;
-	 * 
-	 * 
-	 */
 }
