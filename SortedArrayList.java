@@ -63,7 +63,6 @@ public class SortedArrayList<E> implements SortedList<E> {
 	 * @return the index of the first element in the array that is greater than or
 	 *         equal to target, or return size if no such element exists
 	 */
-	@SuppressWarnings("unchecked")
 	private int binarySearch(E target) {
 		int low = 0;
 		int high = size;
@@ -90,7 +89,7 @@ public class SortedArrayList<E> implements SortedList<E> {
 			for (int i = 0; i < size; i++) {
 				newArray[i] = array[i];
 			}
-
+			array = newArray;
 		}
 	}
 
@@ -130,6 +129,7 @@ public class SortedArrayList<E> implements SortedList<E> {
 	 * @return true if this sorted list contains every element in the specified
 	 *         collection; otherwise, returns false
 	 */
+	@Override
 	public boolean containsAll(Collection<? extends E> items) {
 		for (E e : items) {
 			if (!contains(e)) {
@@ -147,21 +147,44 @@ public class SortedArrayList<E> implements SortedList<E> {
 	 * @return the number of elements in this sorted list that are equal to the
 	 *         specified target
 	 */
-	int countEntries(E target);
+	@Override
+	public int countEntries(E target) {
+		int count = 0;
+		int index = binarySearch(target);
+		while (index < size && compare(array[index], target) == 0) {
+			count++;
+			index++;
+		}
+		return count;
+	}
 
 	/**
 	 * Inserts the specified element into this sorted list.
 	 * 
 	 * @param element - the element to insert
 	 */
-	void insert(E element);
+	@Override
+	public void insert(E element) {
+		ensureCapacity();
+		int index = binarySearch(element);
+		for (int i = size; i > index; i--) {
+			array[i] = array[i - 1];
+		}
+		array[index] = element;
+		size++;
+	}
 
 	/**
 	 * Inserts the specified elements into this sorted list.
 	 * 
 	 * @param coll - the collection of elements to insert
 	 */
-	public void insertAll(Collection<? extends E> coll);
+	@Override
+	public void insertAll(Collection<? extends E> coll) {
+		for (E e : coll) {
+			insert(e);
+		}
+	}
 
 	/**
 	 * Determines whether this sorted list contains any elements.
@@ -179,7 +202,13 @@ public class SortedArrayList<E> implements SortedList<E> {
 	 * @return the largest element in this sorted list
 	 * @throws NoSuchElementException if this sorted list is empty
 	 */
-	E max() throws NoSuchElementException;
+	@Override
+	public E max() throws NoSuchElementException {
+		if (size == 0) {
+			throw new NoSuchElementException();
+		}
+		return array[size - 1];
+	}
 
 	/**
 	 * Gets the median element in this sorted list. If this sorted list contains an
@@ -188,7 +217,13 @@ public class SortedArrayList<E> implements SortedList<E> {
 	 * @return the median element in this sorted list
 	 * @throws NoSuchElementException if this sorted list is empty
 	 */
-	E median() throws NoSuchElementException;
+	@Override
+	public E median() throws NoSuchElementException {
+		if (size == 0) {
+			throw new NoSuchElementException();
+		}
+		return array[size / 2];
+	}
 
 	/**
 	 * Gets the smallest element in this sorted list.
@@ -196,20 +231,35 @@ public class SortedArrayList<E> implements SortedList<E> {
 	 * @return the smallest element in this sorted list
 	 * @throws NoSuchElementException if this sorted list is empty
 	 */
-	E min() throws NoSuchElementException;
+	@Override
+	public E min() throws NoSuchElementException {
+		if (size == 0) {
+			throw new NoSuchElementException();
+		}
+		return array[0];
+	}
 
 	/**
 	 * Gets the number of elements in this sorted list.
 	 * 
 	 * @return the number of elements in this sorted list
 	 */
-	int size();
+	@Override
+	public int size() {
+		return size;
+	}
 
 	/**
 	 * Generates an array containing all of elements in this sorted list, in order.
 	 * 
 	 * @return an array containing all of elements in this sorted list
 	 */
-	Object[] toArray();
-
+	@Override
+	public Object[] toArray() {
+		Object[] result = new Object[size];
+		for (int i = 0; i < size; i++) {
+			result[i] = array[i];
+		}
+		return result;
+	}
 }
