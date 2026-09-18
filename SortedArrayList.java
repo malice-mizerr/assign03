@@ -132,7 +132,7 @@ public class SortedArrayList<E> implements SortedList<E> {
 	@Override
 	public boolean containsAll(Collection<? extends E> items) {
 		for (E e : items) {
-			if (!contains(e)) {
+			if (!contains(e)) { 
 				return false;
 			}
 		}

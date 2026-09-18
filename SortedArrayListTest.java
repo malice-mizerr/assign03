@@ -6,9 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Collection;
 import java.util.NoSuchElementException;
 
 /**
@@ -26,7 +24,7 @@ public class SortedArrayListTest {
 	}
 
 	/*
-	 * Tests
+	 * TESTS
 	 */
 
 	@Test
@@ -146,7 +144,7 @@ public class SortedArrayListTest {
 		list.insert(20);
 		list.insert(50);
 
-		assertEquals(1, list.contains(50));
+		assertEquals(1, list.countEntries(50));
 	}
 
 	@Test
@@ -159,5 +157,67 @@ public class SortedArrayListTest {
 		List<Integer> coll = List.of(3, 1, 2, 5);
 
 		assertTrue(list.containsAll(coll));
+	}
+
+	@Test
+	public void containsAllLargeCollection() {
+		List<Integer> coll = List.of(3, 1, 2, 5, 7, 2, 10, 40, 6, 8, 9, 14);
+		list.insertAll(coll);
+		assertTrue(list.containsAll(coll));
+	}
+
+	@Test
+	public void containsAllFalse() {
+		list.insert(3);
+		list.insert(1);
+		list.insert(5);
+
+		List<Integer> coll = List.of(3, 1, 2, 5);
+		assertFalse(list.containsAll(coll));
+	}
+
+	@Test
+	public void insertAllExpandsArray() {
+		List<Integer> coll = List.of(3, -1, 2, 5, 7, 2, 10, 0, 6, 8, 9, 14, 67, -56, 43, 23, 92);
+		list.insertAll(coll);
+		assertEquals(17, list.size());
+	}
+
+	@Test
+	public void insertAllIsSorted() {
+		List<Integer> coll = List.of(3, -1, 2, 5, 7, 2, 10, 0, 6, 8, 9, 14, 67, -56, 43, 23, 92);
+		list.insertAll(coll);
+		assertEquals(-56, list.min());
+		assertEquals(7, list.median());
+		assertEquals(92, list.max());
+	}
+
+	@Test
+	public void isEmptyTrue() {
+		assertTrue(list.isEmpty());
+	}
+
+	@Test
+	public void isEmptyFalse() {
+		list.insert(3);
+		list.insert(1);
+		list.insert(5);
+		assertFalse(list.isEmpty());
+	}
+
+	@Test
+	public void clear() {
+		List<Integer> coll = List.of(3, -1, 2, 5, 7, 2, 10, 0, 6, 8, 9, 14, 67, -56, 43, 23, 92);
+		list.insertAll(coll);
+		list.clear();
+		assertTrue(list.isEmpty());
+	}
+
+	@Test
+	public void toArray() {
+		List<Integer> coll = List.of(3, -1, 2, 5, 7, 2, 10, 0, 6, 8, 9, 14, 67, -56, 43, 23, 92);
+		list.insertAll(coll);
+		Object[] array = list.toArray();
+		assertEquals(17, array.length);
 	}
 }
