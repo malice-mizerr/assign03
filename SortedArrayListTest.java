@@ -132,4 +132,32 @@ public class SortedArrayListTest {
 		list.insert(2);
 		assertEquals(2, list.countEntries(7));
 	}
+
+	@Test
+	public void countEntriesReturnsZeroWhenMissing() {
+		list.insert(184);
+		assertEquals(0, list.countEntries(23));
+
+	}
+
+	@Test
+	public void countEntriesForAppearingOnce() {
+		list.insert(10);
+		list.insert(20);
+		list.insert(50);
+
+		assertEquals(1, list.contains(50));
+	}
+
+	@Test
+	public void containsAllSmallCollection() {
+		list.insert(3);
+		list.insert(1);
+		list.insert(2);
+		list.insert(5);
+
+		List<Integer> coll = List.of(3, 1, 2, 5);
+
+		assertTrue(list.containsAll(coll));
+	}
 }
